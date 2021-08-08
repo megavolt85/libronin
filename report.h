@@ -10,7 +10,6 @@
 START_EXTERN_C
 void report(const char *str);
 void reportf(const char *fmt, ...);
-char *itoa(int x);
 END_EXTERN_C
 
 #endif //_RONIN_REPORT_H
