@@ -91,8 +91,8 @@ _serial_puts:
 	bra	.ssloop1
 	mov.w	r0,@(4,r2)
 .endstr:
-	nop
 	rts
+	nop
 
 
 	! Send a single character to the serial port
