@@ -1,5 +1,6 @@
-NETSERIAL = 0
+NETSERIAL = 1
 NETCD = 0
+DCLOAD_SUPPORT = 1
 CCC = sh-elf-c++ -fno-rtti -fconserve-space
 CC = sh-elf-gcc -Wall
 LD = sh-elf-ld -EL
@@ -55,9 +56,13 @@ LWIPOBJS=$(LWCOREOBJS) $(LWCORE4OBJS) $(LWAPIOBJS) $(LWNETIFOBJS) \
 
 OBJECTS  = report.o ta.o maple.o video.o c_video.o vmsfs.o time.o display.o sound.o gddrive.o gtext.o translate.o misc.o gfxhelper.o malloc.o matrix.o
 
-ifeq "$(NETSERIAL)" "1"
+ifeq "$(NETSERIAL)$(DCLOAD_SUPPORT)" "11"
+OBJECTS += dcl_serial.o dcload.o
+endif
+ifeq "$(NETSERIAL)$(DCLOAD_SUPPORT)" "10"
 OBJECTS += netserial.o
-else
+endif
+ifeq "$(NETSERIAL)" "0"
 OBJECTS += serial.o
 endif
 ifeq "$(NETCD)" "1"
@@ -269,7 +274,8 @@ arm_startup.o: arm_startup.s
 .S.o:
 #	@echo Compiling $*.s
 #	$(CCC) $(INCLUDES) -S $(CCFLAGS) $*.S -o $@
-	$(AS) $*.S -o $@
+#	$(AS) $*.S -o $@
+	$(CC)  $(INCLUDES) -c $(CCFLAGS) -DASSEMBLER $*.S -o $@
 
 .S.i:
 	$(CCC) $(INCLUDES) -c -E $(CCFLAGS) $*.S -o $@
