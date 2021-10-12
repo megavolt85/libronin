@@ -29,9 +29,10 @@ unsigned long Timer( )
   return ~TCNT0;
 }
 
-void usleep(unsigned int usec)
+int usleep(useconds_t useconds)
 {
   unsigned int t0 = Timer();
-  unsigned int dly = USEC_TO_TIMER(usec);
+  unsigned int dly = USEC_TO_TIMER(useconds);
   while( ((unsigned int)(Timer()-t0)) < dly );
+  return 0;
 }

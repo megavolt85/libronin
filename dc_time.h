@@ -11,7 +11,7 @@
 #define TIMER_TO_USEC(x) (((x)<<11)/100)
 START_EXTERN_C
 unsigned long Timer( );
-void usleep( unsigned int usecs );
+int usleep(useconds_t useconds);
 END_EXTERN_C
 
 #endif //_RONIN_DC_TIME_H
