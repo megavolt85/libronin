@@ -456,7 +456,26 @@ void dc_reset_screen( int hires, int lace )
     b->fb_modulo = (tvmode? 1280*2 : 1280);
     b->fb_lines = b->ta_tileh*32;
     b->fb_pixfmt = TA_PIXFMT_RGB565|TA_PIXFMT_DITHER;
+    b->ta_zclip = 0x3e4cccc0;
   }
+
+  ta_bg_list.cmd1 = TA_CMD_POLYGON|TA_CMD_POLYGON_SUBLIST;
+  ta_bg_list.cmd2 = TA_POLYMODE1_Z_LESS|0x00800000;
+  ta_bg_list.dummy1 = 0;
+  ta_bg_list.x1 = 0.0;
+  ta_bg_list.x1 = 480.0;
+  ta_bg_list.z1 = 1.0;
+  ta_bg_list.color1 = 0;
+  ta_bg_list.x2 = 0.0;
+  ta_bg_list.x2 = 0.0;
+  ta_bg_list.z2 = 1.0;
+  ta_bg_list.color2 = 0;
+  ta_bg_list.x3 = 640.0;
+  ta_bg_list.x3 = 480.0;
+  ta_bg_list.z3 = 1.0;
+  ta_bg_list.color3 = 0;
+  ta_bg_list.dummy2 = 0;
+
 
   ta_init_renderstate();
 

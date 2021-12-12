@@ -87,6 +87,7 @@ static unsigned int ta_dlist_size, ta_dlist_left;
 
 struct ta_buffers ta_buffers[2];
 
+struct ta_bg_list ta_bg_list;
 
 /* Functions to send a list (the basic command unit of the TA) to the
    command list compiler.  ta_commit_list sends a 32-byte list, and
@@ -195,18 +196,23 @@ void ta_interrupt(unsigned int events)
 
   /* check for events */
 
-  if((events & 0x780 /* TA event */) &&
+  if((events & 0x200780 /* TA event */) &&
      (n = rs->ta_binning) >= 0) {
 
-    if(!((rs->ta_events &= ~(events & 0x780)))) {
+    if(!((rs->ta_events &= ~(events & 0x200780)))) {
 
       /* Finalize binlist */
       unsigned int *taend = (unsigned int *)
 	(void *)(0xa5000000|*(volatile unsigned int *)0xa05f8138);
       int i;
-
+#if 1
+      unsigned int *bg = (unsigned int *)&ta_bg_list;
+      for (i=0; i<0x12; i++)
+	taend[i] = bg[i];
+#else
       for (i=0; i<0x12; i++)
 	taend[i] = 0;
+#endif
       
       rs->binlist_taend[n] = taend;
       rs->binlist_state[n] = BINLIST_FINALIZED;
@@ -265,7 +271,7 @@ void ta_interrupt(unsigned int events)
       regs[0x064/4] = scn;
       regs[0x08c/4] = 0x01000000 |
 	((((unsigned int)rs->binlist_taend[n])&0x003fffff)<<1);
-      regs[0x088/4] = 0x3e4cccc0 /* zclip */;
+      regs[0x088/4] = blb->ta_zclip /* zclip */;
       regs[0x068/4] = (blb->ta_clipw-1)<<16;
       regs[0x06c/4] = (blb->ta_cliph-1)<<16;
       regs[0x04c/4] = fbb->fb_modulo>>3;
