@@ -205,14 +205,10 @@ void ta_interrupt(unsigned int events)
       unsigned int *taend = (unsigned int *)
 	(void *)(0xa5000000|*(volatile unsigned int *)0xa05f8138);
       int i;
-#if 1
+
       unsigned int *bg = (unsigned int *)&ta_bg_list;
       for (i=0; i<0x12; i++)
 	taend[i] = bg[i];
-#else
-      for (i=0; i<0x12; i++)
-	taend[i] = 0;
-#endif
       
       rs->binlist_taend[n] = taend;
       rs->binlist_state[n] = BINLIST_FINALIZED;

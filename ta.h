@@ -217,15 +217,14 @@ extern void ta_txrelease(void *ptr);
 #define TA_LIST_PUNCHTHROUGH 16
 
 struct ta_bg_list {
-  unsigned int cmd1, cmd2;
-  int dummy1;
+  unsigned int cmd1, cmd2, dummy1;
   float x1, y1, z1;
   unsigned int color1;
   float x2, y2, z2;
   unsigned int color2;
   float x3, y3, z3;
   unsigned int color3;
-  int dummy2;
+  unsigned int dummy2, dummy3, dummy4;
 };
 
 extern struct ta_bg_list ta_bg_list;

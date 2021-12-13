@@ -459,22 +459,22 @@ void dc_reset_screen( int hires, int lace )
     b->ta_zclip = 0x3e4cccc0;
   }
 
-  ta_bg_list.cmd1 = TA_CMD_POLYGON|TA_CMD_POLYGON_SUBLIST;
-  ta_bg_list.cmd2 = TA_POLYMODE1_Z_LESS|0x00800000;
-  ta_bg_list.dummy1 = 0;
-  ta_bg_list.x1 = 0.0;
-  ta_bg_list.x1 = 480.0;
-  ta_bg_list.z1 = 1.0;
-  ta_bg_list.color1 = 0;
-  ta_bg_list.x2 = 0.0;
-  ta_bg_list.x2 = 0.0;
-  ta_bg_list.z2 = 1.0;
-  ta_bg_list.color2 = 0;
-  ta_bg_list.x3 = 640.0;
-  ta_bg_list.x3 = 480.0;
-  ta_bg_list.z3 = 1.0;
-  ta_bg_list.color3 = 0;
-  ta_bg_list.dummy2 = 0;
+  struct ta_bg_list *bg = &ta_bg_list;
+  bg->cmd1 = TA_CMD_POLYGON|TA_CMD_POLYGON_SUBLIST;
+  bg->cmd2 = TA_POLYMODE1_Z_LESS|0x00800000;
+  bg->dummy1 = bg->dummy2 = bg->dummy3 = bg->dummy4 = 0;
+  bg->x1 = 0.0;
+  bg->y1 = 480.0;
+  bg->z1 = 1.0;
+  bg->color1 = 0;
+  bg->x2 = 0.0;
+  bg->y2 = 0.0;
+  bg->z2 = 1.0;
+  bg->color2 = 0;
+  bg->x3 = 640.0;
+  bg->y3 = 480.0;
+  bg->z3 = 1.0;
+  bg->color3 = 0;
 
 
   ta_init_renderstate();
