@@ -52,6 +52,7 @@ int chdir(const char *path);
 void cdfs_init(void);
 void cdfs_reinit(void);
 int cdfs_diskchanges(void);
+int cdfs_get_volume_id(char *, unsigned int);
 
 int play_cdda_tracks(int start, int stop, int reps);
 int play_cdda_sectors(int start, int stop, int reps);

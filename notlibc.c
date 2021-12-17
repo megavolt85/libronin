@@ -140,14 +140,14 @@ void exit(int rcode)
  * 8c 010000  binary start    2.9 Mb
  *
  * 8c 280000  malloc start    
- * 8c efffff  malloc end       12 Mb
+ * 8c feffff  malloc end      12 Mb
  *
- * 8c f00000  stack end       
- * 8c fffffc  stack start     1 Mb
+ * 8c ff0000  stack end
+ * 8c fffffc  stack start     64 Kb
  */
 extern char end[];
 #define MEMSTART ((int)end)
-#define MEMEND   0x8cf00000
+#define MEMEND   0x8cff0000
 static int total_size;
 
 #ifndef OLDMALLOC

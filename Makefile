@@ -84,7 +84,7 @@ EXAMPLES = examples/ex_serial.$(TYPE) \
 	   examples/ex_compress.$(TYPE) \
 	   examples/ex_videomodes.$(TYPE) \
 
-ARMFLAGS=-mcpu=arm7 -ffreestanding  -O5 -funroll-loops
+ARMFLAGS=-mcpu=arm7 -ffreestanding  -O5 -funroll-loops -fno-reorder-functions
 
 most: include lib/crt0.o lib/libronin.a lib/libz.a
 
@@ -237,7 +237,7 @@ arm_sound_code.bin: arm_sound_code.elf
 	arm-elf-objcopy -O binary $< $@
 
 arm_sound_code.elf: arm_startup.o arm_sound_code.o
-	arm-elf-gcc $(ARMFLAGS) -Wl,-Ttext,0 -nostdlib -nostartfiles -o $@ $^ -lgcc -lgcc
+	arm-elf-gcc $(ARMFLAGS) -Wl,-Ttext,0,-z,max-page-size=1 -nostdlib -nostartfiles -o $@ $^ -lgcc -lgcc
 
 arm_sound_code.o: arm_sound_code.c soundcommon.h
 	arm-elf-gcc -c -Wall $(ARMFLAGS) -o $@ $<
@@ -274,7 +274,6 @@ arm_startup.o: arm_startup.s
 .S.o:
 #	@echo Compiling $*.s
 #	$(CCC) $(INCLUDES) -S $(CCFLAGS) $*.S -o $@
-#	$(AS) $*.S -o $@
 	$(CC)  $(INCLUDES) -c $(CCFLAGS) -DASSEMBLER $*.S -o $@
 
 .S.i:

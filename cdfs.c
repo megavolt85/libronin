@@ -28,6 +28,7 @@ static int drive_inited = -1;
 static int secbuf_secs[NUM_BUFFERS];
 static int cwd_sec, cwd_len;
 static int discchange_count;
+static char volume_id[32];
 
 /*
  * libc like support
@@ -286,6 +287,12 @@ static int find_root(unsigned int *psec, unsigned int *plen)
     return r;
   if(memcmp((char *)sector_buffer[0], "\001CD001", 6))
     return ERR_DIRERR;
+  memcpy(volume_id, ((char *)sector_buffer[0])+40, 32);
+  for (r = 31; r>=0; --r)
+    if (volume_id[r] == ' ')
+      volume_id[r] = 0;
+    else
+      break;
   *psec = saved_sec = ntohlp(((char *)sector_buffer[0])+156+6) + 150;
   *plen = saved_len = ntohlp(((char *)sector_buffer[0])+156+14);
   return 0;
@@ -312,6 +319,20 @@ static int low_find(unsigned int sec, unsigned int dirlen, int isdir,
     dirlen -= 2048;
   }
   return ERR_NOFILE;
+}
+
+int cdfs_get_volume_id(char *buf, unsigned int len)
+{
+  unsigned int rsec, rlen;
+  int r = find_root(&rsec, &rlen);
+  if (r < 0)
+    return r;
+  if (len > 32) {
+    memcpy(buf, volume_id, 32);
+    memset(buf+32, 0, len-32);
+  } else
+    memcpy(buf, volume_id, len);
+  return 0;
 }
 
 /* File I/O */
