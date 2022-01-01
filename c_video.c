@@ -456,13 +456,12 @@ void dc_reset_screen( int hires, int lace )
     b->fb_modulo = (tvmode? 1280*2 : 1280);
     b->fb_lines = b->ta_tileh*32;
     b->fb_pixfmt = TA_PIXFMT_RGB565|TA_PIXFMT_DITHER;
-    b->ta_zclip = 0x3e4cccc0;
   }
 
   struct ta_bg_list *bg = &ta_bg_list;
   bg->cmd1 = TA_CMD_POLYGON|TA_CMD_POLYGON_SUBLIST;
   bg->cmd2 = TA_POLYMODE1_Z_LESS|0x00800000;
-  bg->dummy1 = bg->dummy2 = bg->dummy3 = bg->dummy4 = 0;
+  bg->texture = 0;
   bg->x1 = 0.0;
   bg->y1 = 480.0;
   bg->z1 = 1.0;
@@ -475,6 +474,7 @@ void dc_reset_screen( int hires, int lace )
   bg->y3 = 480.0;
   bg->z3 = 1.0;
   bg->color3 = 0;
+  bg->dummy[0] = bg->dummy[1] = bg->dummy[2] = 0;
 
 
   ta_init_renderstate();

@@ -267,7 +267,7 @@ void ta_interrupt(unsigned int events)
       regs[0x064/4] = scn;
       regs[0x08c/4] = 0x01000000 |
 	((((unsigned int)rs->binlist_taend[n])&0x003fffff)<<1);
-      regs[0x088/4] = blb->ta_zclip /* zclip */;
+      regs[0x088/4] = 0x3e4cccc0 /* zclip */;
       regs[0x068/4] = (blb->ta_clipw-1)<<16;
       regs[0x06c/4] = (blb->ta_cliph-1)<<16;
       regs[0x04c/4] = fbb->fb_modulo>>3;

@@ -217,14 +217,14 @@ extern void ta_txrelease(void *ptr);
 #define TA_LIST_PUNCHTHROUGH 16
 
 struct ta_bg_list {
-  unsigned int cmd1, cmd2, dummy1;
+  unsigned int cmd1, cmd2, texture;
   float x1, y1, z1;
   unsigned int color1;
   float x2, y2, z2;
   unsigned int color2;
   float x3, y3, z3;
   unsigned int color3;
-  unsigned int dummy2, dummy3, dummy4;
+  unsigned int dummy[3];
 };
 
 extern struct ta_bg_list ta_bg_list;
@@ -232,7 +232,6 @@ extern struct ta_bg_list ta_bg_list;
 extern struct ta_buffers {
   int ta_tilew, ta_tileh, ta_clipw, ta_cliph, ta_lists, ta_extra_segments;
   int fb_modulo, fb_lines, fb_pixfmt;
-  unsigned int ta_zclip;
 
   /* initialized by ta_init_renderstate() */
   void *ta_cmdlist, *ta_tiledescr, *ta_tilebuf, *ta_tiles;
