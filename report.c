@@ -7,7 +7,7 @@
 
 //! Returns the int @[x] converted to a string.
 //FIXME: Move it to some string lib or something instead.
-char *itoa(int x) 
+char *itoa_ronin(int x) 
 { 
   static char buf[30];
   int minus = 0;
@@ -56,7 +56,7 @@ void reportf(const char *fmt, ...)
 
        case 's': serial_puts( va_arg(va, char *) );   break;
        case '%': serial_putc('%'); break;
-       case 'd': serial_puts( itoa(va_arg(va, int)) ); break;
+       case 'd': serial_puts( itoa_ronin(va_arg(va, int)) ); break;
        case 'p': serial_puts("(void *)0x");
        case 'x': 
        {

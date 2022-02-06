@@ -112,7 +112,7 @@ char *vmsfs_describe_error()
      return "No error.";
    case VMSFS_EOUS:
      strcpy(buf, "Not enough space on VMU. Need ");
-     strcat(buf, itoa(ous_want));
+     strcat(buf, itoa_ronin(ous_want));
      strcat(buf, " blocks.");
      return buf;
    case VMSFS_EFORMAT:
@@ -125,7 +125,7 @@ char *vmsfs_describe_error()
      return "Failed to write block.";
    case VMSFS_EWRITE:
      strcpy(buf, "Failed to write block number ");
-     strcat(buf, itoa(ous_want));
+     strcat(buf, itoa_ronin(ous_want));
      strcat(buf, ".");
      return buf;     
    case VMSFS_ENODIR:
@@ -142,27 +142,27 @@ char *vmsfs_describe_error()
      return "Refused to verify block >= 0x10000.";
    case VMSFS_EREAD:
      strcpy(buf, "Failed to read block number ");
-     strcat(buf, itoa(ous_want));
+     strcat(buf, itoa_ronin(ous_want));
      strcat(buf, ".");
      return buf;
    case VMSFS_EVFYR:
      strcpy(buf, "Failed to read block number ");
-     strcat(buf, itoa(ous_want));
+     strcat(buf, itoa_ronin(ous_want));
      strcat(buf, " while verifying.");
      return buf;
    case VMSFS_EVFY:
      strcpy(buf, "Verification failed on block number ");
-     strcat(buf, itoa(ous_want));
+     strcat(buf, itoa_ronin(ous_want));
      strcat(buf, ".");
      return buf;
    case VMSFS_EBBLKR:
      strcpy(buf, "Special error in vmsfs_read_file while reading block ");
-     strcat(buf, itoa(ous_want));
+     strcat(buf, itoa_ronin(ous_want));
      strcat(buf, ".");
      return buf;
    case VMSFS_EBBLKO:
      strcpy(buf, "Special error in vmsfs_open_file while reading block ");
-     strcat(buf, itoa(ous_want));
+     strcat(buf, itoa_ronin(ous_want));
      strcat(buf, ".");
      return buf;
 
@@ -175,7 +175,7 @@ char *vmsfs_describe_error()
 
    default:
      strcpy(buf, "Unknown error '");
-     strcat(buf, itoa(vmsfs_errno));
+     strcat(buf, itoa_ronin(vmsfs_errno));
      strcat(buf, "'!");
      return buf;
   }
@@ -204,7 +204,7 @@ int vmsfs_check_unit(int unit, int part, struct vmsinfo *info)
     report("A1 ");
   else if(res[0] != MAPLE_RESPONSE_DEVINFO) {
     report("A2 ");
-    report(itoa(res[0]));
+    report(itoa_ronin(res[0]));
     report(" ");
   }
   else if(!(res[3]>=28))

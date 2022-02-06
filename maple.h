@@ -50,36 +50,43 @@ struct maple_devinfo {
 
 struct mapledev
 {
-  unsigned int func, xfunc, xcond;
-  char ttl, present, dummy1, dummy2;
-  union {
-    struct {
-      unsigned short buttons;
-      unsigned char rtrigger;
-      unsigned char ltrigger;
-      unsigned char joyx;
-      unsigned char joyy;
-      unsigned char joyx2;
-      unsigned char joyy2;
-    } controller;
-    struct {
-      unsigned char shift;
-      unsigned char led;
-      unsigned char key[6];
-    } kbd;
-    struct {
-      unsigned int buttons;
-      short axis1;
-      short axis2;
-      short axis3;
-      short axis4;
-      short axis5;
-      short axis6;
-      short axis7;
-      short axis8;
-    } mouse;
-    unsigned int data[5];
-  } cond;
+	unsigned int func, xfunc, xcond;
+	char ttl, present, dummy1, dummy2;
+	union 
+	{
+		struct 
+		{
+			unsigned short buttons;
+			unsigned char rtrigger;
+			unsigned char ltrigger;
+			unsigned char joyx;
+			unsigned char joyy;
+			unsigned char joyx2;
+			unsigned char joyy2;
+		} controller;
+		
+		struct 
+		{
+			unsigned char shift;
+			unsigned char led;
+			unsigned char key[6];
+		} kbd;
+		
+		struct 
+		{
+			unsigned int buttons;
+			short axis1;
+			short axis2;
+			short axis3;
+			short axis4;
+			short axis5;
+			short axis6;
+			short axis7;
+			short axis8;
+		} mouse;
+		
+		unsigned int data[5];
+	} cond;
 };
 
 struct maple_minfo {

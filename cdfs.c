@@ -29,7 +29,7 @@ static int secbuf_secs[NUM_BUFFERS];
 static int cwd_sec, cwd_len;
 static int discchange_count;
 static char volume_id[32];
-
+static unsigned int disc_type;
 /*
  * libc like support
  */
@@ -132,7 +132,9 @@ static int init_drive()
 
   gdGdcGetDrvStat(param);
 
-  cdxa = (param[1] == 32);
+  disc_type = param[1];
+  
+  cdxa = (param[1] == 0x20);
 
   param[0] = 0; /* set data type */
   param[1] = 8192;
@@ -250,15 +252,24 @@ static int fncompare(const char *fn1, int fn1len, const char *fn2, int fn2len)
 
 static unsigned int find_datatrack(struct TOC *toc)
 {
-  int i, first, last;
-  first = TOC_TRACK(toc->first);
-  last = TOC_TRACK(toc->last);
-  if(first < 1 || last > 99 || first > last)
-    return 0;
-  for(i=last; i>=first; --i)
-    if(TOC_CTRL(toc->entry[i-1])&4)
-      return TOC_LBA(toc->entry[i-1]);
-  return 0;
+	if (disc_type == 0x80)
+	{
+		return 45150;
+	}
+	
+	int i, first, last;
+	
+	first = TOC_TRACK(toc->first);
+	last = TOC_TRACK(toc->last);
+	
+	if(first < 1 || last > 99 || first > last)
+		return 0;
+	
+	for(i=last; i>=first; --i)
+		if(TOC_CTRL(toc->entry[i-1])&4)
+			return TOC_LBA(toc->entry[i-1]);
+	
+	return 0;
 }
 
 static int find_root(unsigned int *psec, unsigned int *plen)
@@ -278,7 +289,7 @@ static int find_root(unsigned int *psec, unsigned int *plen)
   memset(secbuf_secs, 0, sizeof(secbuf_secs));
   if((r=init_drive())!=0)
     return r;
-  if((r=read_toc(&toc, 0))!=0)
+  if((r=read_toc(&toc, disc_type == 0x80))!=0)
     return r;
   current_toc = &toc;
   if(!(sec = find_datatrack(&toc)))
@@ -628,7 +639,7 @@ void cdfs_init()
 
   usleep(1000);
 
-  /* Reactivate GD-ROM drive */
+  // Reactivate GD-ROM drive 
 
   *((volatile unsigned long *)0xa05f74e4) = 0x1fffff;
   for(p=0; p<0x200000/4; p++)

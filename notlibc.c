@@ -7,6 +7,7 @@
 //#include <stddef.h>   /* for size_t */
 //#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "common.h"

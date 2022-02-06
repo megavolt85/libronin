@@ -1,15 +1,17 @@
 NETSERIAL = 1
 NETCD = 0
 DCLOAD_SUPPORT = 1
-CCC = sh-elf-c++ -fno-rtti -fconserve-space
-CC = sh-elf-gcc -Wall
-LD = sh-elf-ld -EL
-AS = sh-elf-as -little
-AR = sh-elf-ar
+SH_ELF_BIN  = /opt/toolchains/dc/roninchain/bin
+ARM_ELF_BIN = /opt/toolchains/dc/arm-eabi/bin
+CCC = $(SH_ELF_BIN)/sh-elf-c++ -fno-rtti -fconserve-space
+CC = $(SH_ELF_BIN)/sh-elf-gcc -Wall
+LD = $(SH_ELF_BIN)/sh-elf-ld -EL
+AS = $(SH_ELF_BIN)/sh-elf-as -little
+AR = $(SH_ELF_BIN)/sh-elf-ar
 
 
 #Must be O4 to handle long jumps correctly.
-OPTIMISE=-O4 -ffreestanding -ffast-math -fschedule-insns2 -fomit-frame-pointer -fno-inline-functions -fno-defer-pop -fforce-addr -fstrict-aliasing -funroll-loops -fdelete-null-pointer-checks -fno-exceptions
+OPTIMISE = -O4 -ffreestanding -ffast-math -fschedule-insns2 -fomit-frame-pointer -fno-inline-functions -fno-defer-pop -fforce-addr -fstrict-aliasing -funroll-loops -fdelete-null-pointer-checks -fno-exceptions
 CPUFLAGS = -ml  -m4-single-only
 INCLUDES = -Iinclude -Iinclude/ronin
 
@@ -28,7 +30,8 @@ CCFLAGS = $(OPTIMISE) $(CPUFLAGS) $(EXAMPLEFLAGS) -DDC -DDREAMCAST
 
 CFLAGS = $(CCFLAGS)
 
-DISTHEADERS=cdfs.h common.h dc_time.h gddrive.h gfxhelper.h gtext.h maple.h matrix.h misc.h notlibc.h report.h ronin.h serial.h sincos_rroot.h soundcommon.h sound.h ta.h translate.h video.h vmsfs.h
+DISTHEADERS=cdfs.h common.h dc_time.h gddrive.h gfxhelper.h gtext.h maple.h matrix.h misc.h notlibc.h report.h \
+			ronin.h serial.h sincos_rroot.h soundcommon.h sound.h ta.h translate.h video.h vmsfs.h vibro.h
 
 # begin lwIP
 
@@ -54,7 +57,8 @@ LWIPOBJS=$(LWCOREOBJS) $(LWCORE4OBJS) $(LWAPIOBJS) $(LWNETIFOBJS) \
 
 # end lwIP
 
-OBJECTS  = report.o ta.o maple.o video.o c_video.o vmsfs.o time.o display.o sound.o gddrive.o gtext.o translate.o misc.o gfxhelper.o malloc.o matrix.o
+OBJECTS = report.o ta.o maple.o video.o c_video.o vmsfs.o vibro.o time.o display.o sound.o gddrive.o gtext.o \
+		  translate.o misc.o gfxhelper.o malloc.o matrix.o
 
 ifeq "$(NETSERIAL)$(DCLOAD_SUPPORT)" "11"
 OBJECTS += dcl_serial.o dcload.o
@@ -234,16 +238,16 @@ arm_sound_code.h: arm_sound_code.bin
 	./tools/encode_armcode.pike < $< > $@
 
 arm_sound_code.bin: arm_sound_code.elf
-	arm-elf-objcopy -O binary $< $@
+	$(ARM_ELF_BIN)/arm-eabi-objcopy -O binary $< $@
 
 arm_sound_code.elf: arm_startup.o arm_sound_code.o
-	arm-elf-gcc $(ARMFLAGS) -Wl,-Ttext,0,-z,max-page-size=1 -nostdlib -nostartfiles -o $@ $^ -lgcc -lgcc
+	$(ARM_ELF_BIN)/arm-eabi-gcc $(ARMFLAGS) -Wl,-Ttext,0,-z,max-page-size=1 -nostdlib -nostartfiles -o $@ $^ -lgcc -lgcc
 
 arm_sound_code.o: arm_sound_code.c soundcommon.h
-	arm-elf-gcc -c -Wall $(ARMFLAGS) -o $@ $<
+	$(ARM_ELF_BIN)/arm-eabi-gcc -c -Wall $(ARMFLAGS) -o $@ $<
 
 arm_startup.o: arm_startup.s
-	arm-elf-as -marm7 -o $@ $<
+	$(ARM_ELF_BIN)/arm-eabi-as -marm7 -o $@ $<
 
 #Automatic extension conversion.
 .SUFFIXES: .o .cpp .c .cc .h .m .i .S .asm .elf .srec .bin
