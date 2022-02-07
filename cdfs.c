@@ -204,6 +204,13 @@ static int read_cached_sector(unsigned char **buf, int sec)
 int play_cdda_tracks(int start, int stop, int reps)
 {
   struct { int start, stop, reps, dunno; } param;
+  
+  if (disc_type == 0x80) // fix for GDDA
+  {
+	  start += 2;
+	  stop  += 2;
+  }
+  
   param.start = start;
   param.stop = stop;
   param.reps = reps;
