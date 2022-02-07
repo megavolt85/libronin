@@ -156,7 +156,7 @@ static int end_break=MEMSTART;
 
 int brk( void *ebdds )
 {
-    reportf( "brk( %x )\n", ebdds );
+    //reportf( "brk( %x )\n", ebdds );
   int new_break = (int)ebdds;
   if(new_break >= MEMSTART && new_break <= MEMEND) {
     end_break = new_break;
@@ -167,7 +167,7 @@ int brk( void *ebdds )
 
 int stat(const char *path2, struct stat *buf)
 {
-    reportf("stat\n");
+    //reportf("stat\n");
     memset( (void *)buf, 0, sizeof( struct stat ) );
     int fd = open( path2, O_RDONLY );
     if( fd == -1 )
@@ -218,11 +218,11 @@ void *sbrk( ptrdiff_t incr )
   total_size += incr;
   end_break = newend_break;
 
-  reportf("sbrk [%dB alloc,\t%dk tot,\t%dk left -> %p]\r\n",
+  /*reportf("sbrk [%dB alloc,\t%dk tot,\t%dk left -> %p]\r\n",
           incr,
           total_size/1024,
           (MEMEND-end_break)/1024,
-          end_break);
+          end_break);*/
 
   return (void *)(prior_break);
 }
