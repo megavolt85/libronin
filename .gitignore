@@ -2,6 +2,4 @@ arm_sound_code.h
 arm_sound_code.elf
 arm_sound_code.bin
 arm_sound_code.h
-include
-lib/*.o
 *.o

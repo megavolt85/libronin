@@ -206,6 +206,7 @@ extern void *ta_txalloc(unsigned int size);
 extern void ta_txfree(void *ptr);
 extern void *ta_txmark(void);
 extern void ta_txrelease(void *ptr);
+//extern void ta_set_callback(void (*callback)(void));
 #if defined(__cplusplus) || defined(c_plusplus)
 }
 #endif
