@@ -6,6 +6,119 @@
 struct buffer buff;
 #include "arm_sound_code.h"
 
+#define SNDREGADDR(x) (0xa0700000 + (x))
+
+/* These two macros are based on NetBSD's DC port */
+
+/*
+   G2 bus cycles must not be interrupted by IRQs or G2 DMA.
+   The following paired macros will take the necessary precautions.
+ */
+
+#define DMAC_CHCR3 *((volatile unsigned int *)0xffa0003c)
+
+static __inline unsigned int irq_disable(void)
+{
+  register unsigned int sr, tmp;
+  __asm__("stc sr,%0" : "=r" (sr));
+  tmp = (sr & 0xefffff0f) | 0xf0;
+  __asm__("ldc %0,sr" : : "r" (tmp));
+  return sr;
+}
+
+static __inline void irq_restore(unsigned int sr)
+{
+  __asm__("ldc %0,sr" : : "r" (sr));
+}
+
+#define G2_LOCK(OLD1, OLD2) \
+    do { \
+        OLD1 = irq_disable(); \
+        /* suspend any G2 DMA here... */ \
+        OLD2 = DMAC_CHCR3; \
+        DMAC_CHCR3 = OLD2 & ~1; \
+        while((*(volatile unsigned int *)0xa05f688c) & 0x20) \
+            ; \
+    } while(0)
+
+#define G2_UNLOCK(OLD1, OLD2) \
+    do { \
+        /* resume any G2 DMA here... */ \
+        DMAC_CHCR3 = OLD2; \
+        irq_restore(OLD1); \
+    } while(0)
+
+/* Read one dword from G2 */
+unsigned int g2_read_32(unsigned int address) {
+    int old1, old2;
+    unsigned int out;
+
+    G2_LOCK(old1, old2);
+    out = *((volatile unsigned int*)address);
+    G2_UNLOCK(old1, old2);
+
+    return out;
+}
+
+/* Write one dword to G2 */
+void g2_write_32(unsigned int address, unsigned int value) {
+    int old1, old2;
+
+    G2_LOCK(old1, old2);
+    *((volatile unsigned int*)address) = value;
+    G2_UNLOCK(old1, old2);
+}
+
+/* When writing to the SPU RAM, this is required at least every 8 32-bit
+   writes that you execute */
+void g2_fifo_wait() {
+    volatile unsigned int const *g2_fifo = (volatile unsigned int*)0xa05f688c;
+    int i;
+
+    for(i = 0; i < 0x1800; i++) {
+        if(!(*g2_fifo & 0x11)) break;
+    }
+}
+
+/* Set CDDA volume: values are 0-15 */
+void spu_cdda_volume(int left_volume, int right_volume) {
+    if(left_volume > 15)
+        left_volume = 15;
+
+    if(right_volume > 15)
+        right_volume = 15;
+
+    g2_fifo_wait();
+    g2_write_32(SNDREGADDR(0x2040),
+                (g2_read_32(SNDREGADDR(0x2040)) & ~0xff00) | (left_volume << 8));
+    g2_write_32(SNDREGADDR(0x2044),
+                (g2_read_32(SNDREGADDR(0x2044)) & ~0xff00) | (right_volume << 8));
+}
+
+void spu_cdda_pan(int left_pan, int right_pan) {
+    if(left_pan < 16)
+        left_pan = ~(left_pan - 16);
+
+    left_pan &= 0x1f;
+
+    if(right_pan < 16)
+        right_pan = ~(right_pan - 16);
+
+    right_pan &= 0x1f;
+
+    g2_fifo_wait();
+    g2_write_32(SNDREGADDR(0x2040),
+                (g2_read_32(SNDREGADDR(0x2040)) & ~0xff) | (left_pan << 0));
+    g2_write_32(SNDREGADDR(0x2044),
+                (g2_read_32(SNDREGADDR(0x2044)) & ~0xff) | (right_pan << 0));
+}
+
+/* Initialize CDDA stuff */
+static void spu_cdda_init() {
+    spu_cdda_volume(15, 15);
+    spu_cdda_pan(0, 31);
+}
+
 void *memcpy4(void *s1, const void *s2, unsigned int n)
 {
   unsigned int *p1 = s1;
@@ -59,6 +172,7 @@ void init_arm()
   *((volatile unsigned long *)(void *)0xa0702c00) &= ~1;
   //FIXME: Some sort of sleep here would be cleaner...
   for(i=0; i<0x200000; i++);
+  spu_cdda_init();
 }
 
 int fillpos;

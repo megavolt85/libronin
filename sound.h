@@ -32,6 +32,8 @@ void do_sound_command(int cmd);
 int read_sound_int(volatile int *p);
 void stop_sound();
 void start_sound();
+void spu_cdda_volume(int left_volume, int right_volume);
+void spu_cdda_pan(int left_pan, int right_pan);
 END_EXTERN_C
 
 
