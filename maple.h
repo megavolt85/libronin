@@ -114,6 +114,7 @@ void maple_set_gun_mode(int mode);
 /* struct mapledev *check_pads(void); */
 struct mapledev *locked_get_pads(void);
 void maple_vbl_handler(void);
+void set_vbl_handler(void (* func)());
 #if defined(__cplusplus) || defined(c_plusplus)
 }
 #endif

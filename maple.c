@@ -288,8 +288,17 @@ static struct mapledev *check_pads()
 	return dev;
 }
 
+static void (*vbl_func)() = NULL;
+
 void maple_vbl_handler()
 {
 	check_pads();
+	
+	if (vbl_func) (* vbl_func)();
+}
+
+void set_vbl_handler(void (* func)())
+{
+	vbl_func = func;
 }
 
