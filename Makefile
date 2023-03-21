@@ -1,8 +1,8 @@
 NETSERIAL = 1
 NETCD = 0
 DCLOAD_SUPPORT = 1
-SH_ELF_BIN  = /opt/toolchains/dc/roninchain/bin
-ARM_ELF_BIN = /opt/toolchains/dc/arm-eabi/bin
+SH_ELF_BIN  = /opt/toolchains/dc-gcc13/sh-elf/bin
+ARM_ELF_BIN = /opt/toolchains/dc-gcc13/arm-eabi/bin
 CCC = $(SH_ELF_BIN)/sh-elf-c++ -fno-rtti -fconserve-space
 CC = $(SH_ELF_BIN)/sh-elf-gcc -Wall
 LD = $(SH_ELF_BIN)/sh-elf-ld -EL

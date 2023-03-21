@@ -79,11 +79,35 @@ init:
 
 	mov.l	main_addr,r0
 	mov	#0,r1
-	jmp	@r0
-	mov	r1,r0
+	jsr	@r0
+	nop
+
+        mov.l   dcload_magic_addr,r0
+        mov.l   @r0,r0
+        mov.l   dcload_magic_value,r1
+        cmp/eq  r0,r1
+        bf      .normal_exit
+
+        mov.l   dcload_syscall,r0
+        mov.l   @r0,r0
+        jsr     @r0
+        mov     #15,r4
+.normal_exit:
+        mov.l	old_stack,r15
+	lds.l	@r15+,pr
+	rts
+	nop
 
 		
 	.align	2
+dcload_magic_addr:
+	.long	0x8c004004
+dcload_magic_value:
+	.long	0xdeadbeef
+dcload_syscall:
+	.long	0x8c004008
+old_stack:
+	.long	0
 stack_pointer:
 	.long	0x8cfffffc
 p2_mask:
